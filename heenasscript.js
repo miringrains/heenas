@@ -451,27 +451,41 @@ function processServices(objects) {
 
 function processServiceData(catalogData) {
     const services = [];
-    const categories = [];
+    const categoriesMap = new Map();
     
-    if (!catalogData.objects) return { services, categories };
+    if (!catalogData.objects) return { services: [], categories: [] };
     
-    // Extract categories
+    // First, build a map of categories from Square
     catalogData.objects.forEach(obj => {
         if (obj.type === 'CATEGORY' && obj.category_data) {
-            categories.push({
+            categoriesMap.set(obj.id, {
                 id: obj.id,
                 name: obj.category_data.name
             });
         }
     });
     
-    // Process items and their variations intelligently
+    console.log('Categories from Square:', Array.from(categoriesMap.values()));
+    
+    // Process items and their variations
     catalogData.objects.forEach(obj => {
         if (obj.type === 'ITEM' && obj.item_data) {
             const item = obj.item_data;
             
             // Skip items that aren't appointment services
             if (item.product_type !== 'APPOINTMENTS_SERVICE') return;
+            
+            // Get the category from reporting_category
+            let categoryId = null;
+            let categoryName = 'Other Services';
+            
+            if (item.reporting_category && item.reporting_category.id) {
+                categoryId = item.reporting_category.id;
+                const category = categoriesMap.get(categoryId);
+                if (category) {
+                    categoryName = category.name;
+                }
+            }
             
             if (item.variations && item.variations.length > 0) {
                 item.variations.forEach(variation => {
@@ -485,7 +499,7 @@ function processServiceData(catalogData) {
                     const varName = varData.name.toLowerCase();
                     const itemNameLower = item.name.toLowerCase();
                     
-                    // Rules for display name based on analysis:
+                    // Rules for display name:
                     // 1. If variation name is "Regular", just use the item name
                     if (varName === 'regular') {
                         displayName = item.name;
@@ -520,38 +534,10 @@ function processServiceData(catalogData) {
                         teamMemberIds: varData.team_member_ids || [],
                         presentAtAllLocations: obj.present_at_all_locations || false,
                         presentAtLocationIds: obj.present_at_location_ids || [],
-                        absentAtLocationIds: obj.absent_at_location_ids || []
+                        absentAtLocationIds: obj.absent_at_location_ids || [],
+                        category: categoryName,
+                        categoryId: categoryId
                     };
-                    
-                    // Intelligent category assignment based on service name
-                    const serviceName = item.name.toLowerCase();
-                    if (serviceName.includes('thread') || serviceName.includes('eyebrow') || 
-                        serviceName.includes('lip') || serviceName.includes('chin') || 
-                        serviceName.includes('forehead') || serviceName.includes('neck') || 
-                        serviceName.includes('sides') || serviceName === 'full face') {
-                        service.category = 'Threading';
-                    } else if (serviceName.includes('wax') || serviceName.includes('brazillian') || 
-                               serviceName.includes('underarm') || serviceName.includes('arm') || 
-                               serviceName.includes('leg') || serviceName.includes('chest') || 
-                               serviceName.includes('stomach') || serviceName.includes('shoulder') ||
-                               serviceName.includes('back')) {
-                        service.category = 'Waxing';
-                    } else if (serviceName.includes('facial') || serviceName.includes('hydrafacial') || 
-                               serviceName.includes('microneedling') || serviceName.includes('dermaplane')) {
-                        service.category = 'Facials';
-                    } else if (serviceName.includes('massage') || serviceName.includes('abhyanga') || 
-                               serviceName.includes('shiro') || serviceName.includes('pichu') || 
-                               serviceName.includes('kizhi') || serviceName.includes('potli')) {
-                        service.category = 'Body Treatments';
-                    } else if (serviceName.includes('henna') || serviceName.includes('tint') || 
-                               serviceName.includes('lamination') || serviceName.includes('lash')) {
-                        service.category = 'Beauty Services';
-                    } else if (serviceName.includes('udvartana') || serviceName.includes('wrap') || 
-                               serviceName.includes('candling')) {
-                        service.category = 'Specialty Treatments';
-                    } else {
-                        service.category = 'Other Services';
-                    }
                     
                     services.push(service);
                 });
@@ -567,13 +553,26 @@ function processServiceData(catalogData) {
         return a.name.localeCompare(b.name);
     });
     
-    // Create unique categories from services
-    const uniqueCategories = [...new Set(services.map(s => s.category))].map(cat => ({
-        id: cat.toLowerCase().replace(/\s+/g, '-'),
-        name: cat
-    }));
+    // Get unique categories that actually have services
+    const usedCategoryIds = new Set(services.map(s => s.categoryId).filter(id => id !== null));
+    const categories = Array.from(categoriesMap.values()).filter(cat => usedCategoryIds.has(cat.id));
     
-    return { services, categories: uniqueCategories };
+    // Add "Other Services" if there are uncategorized services
+    if (services.some(s => s.categoryId === null)) {
+        categories.push({
+            id: 'other-services',
+            name: 'Other Services'
+        });
+    }
+    
+    console.log('Processed services by category:', 
+        categories.map(cat => ({
+            name: cat.name,
+            count: services.filter(s => s.category === cat.name).length
+        }))
+    );
+    
+    return { services, categories };
 }
 function renderServices() {
     const container = document.getElementById('content-container');
