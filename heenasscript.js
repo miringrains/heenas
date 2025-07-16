@@ -10,20 +10,20 @@ const SQUARE_CONFIG = {
 };
 let appState = {
     currentStep: 1,
-    selectedLocation: SQUARE_CONFIG.locationId,
+    selectedLocation: null,
     selectedCategory: null,
     selectedService: null,
-    selectedVariation: null,
     selectedStaff: null,
     selectedDate: null,
     selectedTime: null,
     customerInfo: {},
     availableCategories: [],
+    categories: [], // Store categories from processServiceData
+    allServices: [],
     availableServices: [],
     availableStaff: [],
-    availableSlots: [],
-    bookingId: null,
-    allServices: [],
+    availableSlots: {},
+    selectedVariation: null,
     locationProfiles: {}
 };
 async function init() {
@@ -121,6 +121,7 @@ async function loadCategories() {
         
         // Store the processed services
         appState.allServices = services;
+        appState.categories = categories; // Store categories for use in selectCategory
         
         // Render categories
         const container = document.getElementById('content-container');
@@ -128,7 +129,7 @@ async function loadCategories() {
         
         categories.forEach(category => {
             // Count services in this category
-            const serviceCount = services.filter(s => s.category === category.name).length;
+            const serviceCount = services.filter(s => s.categoryId === category.id).length;
             
             html += `
                 <div class="service-card" onclick="selectCategory('${category.id}', '${category.name}')">
@@ -187,12 +188,16 @@ function selectCategory(categoryId, categoryName) {
     appState.currentStep = 2;
     updateSteps();
     
-    // Filter services by category
+    // Filter services by category ID (not name, since names might be duplicated)
     const categoryServices = appState.allServices.filter(service => 
-        service.category === categoryName
+        service.categoryId === categoryId || (categoryId === 'other-services' && !service.categoryId)
     );
     
-    renderCategoryServices(categoryName, categoryServices);
+    // Find the category object to get the original name
+    const category = appState.categories.find(c => c.id === categoryId);
+    const displayName = category ? category.originalName || category.name : categoryName;
+    
+    renderCategoryServices(displayName, categoryServices);
 }
 
 function renderCategoryServices(categoryName, services) {
@@ -458,6 +463,7 @@ function processServiceData(catalogData) {
     // First, build a map of categories from Square
     catalogData.objects.forEach(obj => {
         if (obj.type === 'CATEGORY' && obj.category_data) {
+            // Handle duplicate category names by using ID as key
             categoriesMap.set(obj.id, {
                 id: obj.id,
                 name: obj.category_data.name
@@ -545,6 +551,44 @@ function processServiceData(catalogData) {
         }
     });
     
+    // Check for duplicate names and add differentiators
+    const nameGroups = {};
+    services.forEach(service => {
+        if (!nameGroups[service.name]) {
+            nameGroups[service.name] = [];
+        }
+        nameGroups[service.name].push(service);
+    });
+    
+    // For duplicates, add category, price or duration to differentiate
+    Object.entries(nameGroups).forEach(([name, group]) => {
+        if (group.length > 1) {
+            // Check if they're in different categories
+            const uniqueCategories = [...new Set(group.map(s => s.category))];
+            
+            if (uniqueCategories.length > 1) {
+                // Different categories - add category to name
+                group.forEach(service => {
+                    service.displayName = service.name;
+                    service.name = `${service.name} (${service.category})`;
+                });
+            } else {
+                // Same category - check if different prices or durations
+                const uniquePrices = [...new Set(group.map(s => s.price))];
+                const uniqueDurations = [...new Set(group.map(s => s.duration))];
+                
+                if (uniquePrices.length > 1 || uniqueDurations.length > 1) {
+                    group.forEach(service => {
+                        service.displayName = service.name;
+                        const price = (service.price / 100).toFixed(0);
+                        const duration = service.duration / 60000;
+                        service.name = `${service.name} ($${price}, ${duration}min)`;
+                    });
+                }
+            }
+        }
+    });
+    
     // Sort services by category and then by name
     services.sort((a, b) => {
         if (a.category !== b.category) {
@@ -555,24 +599,45 @@ function processServiceData(catalogData) {
     
     // Get unique categories that actually have services
     const usedCategoryIds = new Set(services.map(s => s.categoryId).filter(id => id !== null));
-    const categories = Array.from(categoriesMap.values()).filter(cat => usedCategoryIds.has(cat.id));
+    const uniqueCategories = [];
+    const seenCategoryNames = new Set();
+    
+    Array.from(categoriesMap.values()).forEach(cat => {
+        if (usedCategoryIds.has(cat.id)) {
+            // If we've seen this category name before, add the ID to make it unique
+            let uniqueName = cat.name;
+            if (seenCategoryNames.has(cat.name)) {
+                // Count services in this specific category
+                const count = services.filter(s => s.categoryId === cat.id).length;
+                uniqueName = `${cat.name} (${count} items)`;
+            }
+            seenCategoryNames.add(cat.name);
+            
+            uniqueCategories.push({
+                id: cat.id,
+                name: uniqueName,
+                originalName: cat.name
+            });
+        }
+    });
     
     // Add "Other Services" if there are uncategorized services
     if (services.some(s => s.categoryId === null)) {
-        categories.push({
+        uniqueCategories.push({
             id: 'other-services',
-            name: 'Other Services'
+            name: 'Other Services',
+            originalName: 'Other Services'
         });
     }
     
     console.log('Processed services by category:', 
-        categories.map(cat => ({
+        uniqueCategories.map(cat => ({
             name: cat.name,
-            count: services.filter(s => s.category === cat.name).length
+            count: services.filter(s => s.categoryId === cat.id || (s.categoryId === null && cat.id === 'other-services')).length
         }))
     );
     
-    return { services, categories };
+    return { services, categories: uniqueCategories };
 }
 function renderServices() {
     const container = document.getElementById('content-container');
