@@ -530,33 +530,266 @@ h3 {
     display: none;
 }
 
+/* Mobile optimizations */
 @media (max-width: 768px) {
     .heenas-booking-container {
         padding: 1rem;
+        max-width: 100%;
     }
 
     h1 {
-        font-size: 48px;
+        font-size: 36px;
+        line-height: 1.1;
+        margin-bottom: 0.5rem;
     }
 
     h2 {
-        font-size: 32px;
+        font-size: 24px;
+        margin-bottom: 1rem;
     }
 
-    .calendar-container {
-        grid-template-columns: 1fr;
+    .subtitle {
+        font-size: 14px;
     }
 
+    .booking-header {
+        margin-bottom: 2rem;
+    }
+
+    /* Steps navigation mobile optimization */
+    .booking-steps {
+        padding: 0 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .booking-steps::-webkit-scrollbar {
+        display: none;
+    }
+
+    .step {
+        min-width: 80px;
+        flex: 0 0 auto;
+    }
+
+    .step span {
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .step-number {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+
+    /* Content section mobile */
+    .booking-content {
+        padding: 1.5rem 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    /* Service and staff grids */
     .services-grid,
     .staff-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
+    .service-card,
+    .staff-card {
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .service-name {
+        font-size: 18px;
+    }
+
+    .service-duration,
+    .service-price {
+        font-size: 14px;
+    }
+
+    .service-description {
+        font-size: 13px;
+    }
+
+    /* Calendar mobile optimization */
+    .calendar-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .date-picker {
+        margin-bottom: 1rem;
+    }
+
+    .calendar-header h3 {
+        font-size: 18px;
+    }
+
+    .calendar-grid {
+        gap: 0.25rem;
+    }
+
+    .calendar-day {
+        font-size: 14px;
+        padding: 0.5rem;
+        min-height: 40px;
+    }
+
+    /* Time slots mobile */
+    .time-slots h3 {
+        font-size: 18px;
+        margin-bottom: 1rem;
+    }
+
+    .time-slots-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .time-slot {
+        font-size: 14px;
+        padding: 0.75rem 0.5rem;
+    }
+
+    /* Form mobile optimization */
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .form-group label {
+        font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 0.75rem;
+    }
+
+    /* Buttons mobile */
     .buttons-container {
-        justify-content: center;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
     }
 
     .btn {
         width: 100%;
+        padding: 1rem;
+        font-size: 16px;
+    }
+
+    .btn-secondary {
+        order: 2;
+    }
+
+    .btn-primary {
+        order: 1;
+    }
+
+    /* Staff cards mobile */
+    .staff-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+
+    .staff-name {
+        font-size: 16px;
+    }
+
+    .staff-title {
+        font-size: 14px;
+    }
+
+    /* Confirmation mobile */
+    .confirmation-details {
+        padding: 1rem;
+    }
+
+    .detail-row {
+        flex-direction: row;
+        padding: 0.75rem 0;
+        font-size: 14px;
+    }
+
+    .detail-label {
+        min-width: 100px;
+    }
+
+    /* Loading spinner mobile */
+    .loading p {
+        font-size: 16px;
+    }
+
+    /* Error and success messages */
+    .error-message,
+    .success-message {
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .error-message h3,
+    .success-message h3 {
+        font-size: 20px;
+    }
+
+    .error-message p,
+    .success-message p {
+        font-size: 14px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    .time-slots-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .step {
+        min-width: 60px;
+    }
+
+    .step span {
+        display: none;
+    }
+
+    .service-card.selected::after {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .service-card:active,
+    .staff-card:active,
+    .time-slot:active,
+    .btn:active {
+        transform: scale(0.98);
+    }
+
+    /* Larger touch targets */
+    .service-card,
+    .staff-card,
+    .time-slot {
+        min-height: 60px;
+    }
+
+    .calendar-day {
+        min-height: 44px;
     }
 }
