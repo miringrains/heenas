@@ -8,6 +8,7 @@ addEventListener('fetch', event => {
 // Your Square credentials (store these in Cloudflare environment variables for production)
 const SQUARE_ACCESS_TOKEN = 'EAAAl5v1dJMv0JXR15J_2LRYtKEYy2XV49QpRW4wZSBgraaU1QsvPler5LZ56Dbl';
 const SQUARE_API_BASE = 'https://connect.squareup.com/v2';
+const SQUARE_API_VERSION = '2025-06-18'; // Latest API version
 
 // CORS headers to allow your website to access this worker
 const corsHeaders = {
@@ -31,7 +32,7 @@ async function handleRequest(request) {
     if (path === '/api/locations') {
       const response = await fetch(`${SQUARE_API_BASE}/locations`, {
         headers: {
-          'Square-Version': '2024-01-17',
+          'Square-Version': SQUARE_API_VERSION,
           'Authorization': `Bearer ${SQUARE_ACCESS_TOKEN}`,
           'Content-Type': 'application/json'
         }
@@ -45,7 +46,7 @@ async function handleRequest(request) {
       const response = await fetch(`${SQUARE_API_BASE}/catalog/list?types=ITEM`, {
         method: 'GET',
         headers: {
-          'Square-Version': '2024-01-17',
+          'Square-Version': SQUARE_API_VERSION,
           'Authorization': `Bearer ${SQUARE_ACCESS_TOKEN}`,
           'Content-Type': 'application/json'
         }
@@ -64,7 +65,7 @@ async function handleRequest(request) {
       
       const response = await fetch(teamUrl.toString(), {
         headers: {
-          'Square-Version': '2024-01-17',
+          'Square-Version': SQUARE_API_VERSION,
           'Authorization': `Bearer ${SQUARE_ACCESS_TOKEN}`,
           'Content-Type': 'application/json'
         }
@@ -79,7 +80,7 @@ async function handleRequest(request) {
       const response = await fetch(`${SQUARE_API_BASE}/bookings/availability/search`, {
         method: 'POST',
         headers: {
-          'Square-Version': '2024-01-17',
+          'Square-Version': SQUARE_API_VERSION,
           'Authorization': `Bearer ${SQUARE_ACCESS_TOKEN}`,
           'Content-Type': 'application/json'
         },
@@ -95,7 +96,7 @@ async function handleRequest(request) {
       const response = await fetch(`${SQUARE_API_BASE}/customers/search`, {
         method: 'POST',
         headers: {
-          'Square-Version': '2024-01-17',
+          'Square-Version': SQUARE_API_VERSION,
           'Authorization': `Bearer ${SQUARE_ACCESS_TOKEN}`,
           'Content-Type': 'application/json'
         },
@@ -110,7 +111,7 @@ async function handleRequest(request) {
       const response = await fetch(`${SQUARE_API_BASE}/customers`, {
         method: 'POST',
         headers: {
-          'Square-Version': '2024-01-17',
+          'Square-Version': SQUARE_API_VERSION,
           'Authorization': `Bearer ${SQUARE_ACCESS_TOKEN}`,
           'Content-Type': 'application/json'
         },
@@ -136,7 +137,7 @@ async function handleRequest(request) {
       const response = await fetch(`${SQUARE_API_BASE}/bookings`, {
         method: 'POST',
         headers: {
-          'Square-Version': '2024-01-17',
+          'Square-Version': SQUARE_API_VERSION,
           'Authorization': `Bearer ${SQUARE_ACCESS_TOKEN}`,
           'Content-Type': 'application/json'
         },
@@ -164,7 +165,7 @@ async function handleRequest(request) {
       
       const response = await fetch(catalogUrl, {
         headers: {
-          'Square-Version': '2024-01-17',
+          'Square-Version': SQUARE_API_VERSION,
           'Authorization': `Bearer ${SQUARE_ACCESS_TOKEN}`,
           'Content-Type': 'application/json'
         }
@@ -231,7 +232,7 @@ async function handleRequest(request) {
     if (path === '/api/booking-profiles/locations') {
       const response = await fetch(`${SQUARE_API_BASE}/bookings/location-booking-profiles`, {
         headers: {
-          'Square-Version': '2024-01-17',
+          'Square-Version': SQUARE_API_VERSION,
           'Authorization': `Bearer ${SQUARE_ACCESS_TOKEN}`,
           'Content-Type': 'application/json'
         }
@@ -244,7 +245,7 @@ async function handleRequest(request) {
     if (path === '/api/booking-profiles/business') {
       const response = await fetch(`${SQUARE_API_BASE}/bookings/business-booking-profile`, {
         headers: {
-          'Square-Version': '2024-01-17',
+          'Square-Version': SQUARE_API_VERSION,
           'Authorization': `Bearer ${SQUARE_ACCESS_TOKEN}`,
           'Content-Type': 'application/json'
         }
