@@ -836,23 +836,21 @@ async function loadAvailability() {
                     start_at: startDate.toISOString(),
                     end_at: endDate.toISOString()
                 },
-                location_id: appState.selectedLocation || SQUARE_CONFIG.locationId
+                location_id: appState.selectedLocation || SQUARE_CONFIG.locationId,
+                segment_filters: [
+                    {
+                        service_variation_id: appState.selectedService.id
+                    }
+                ]
             }
         };
         
-        // Build the segment filters
-        const segmentFilters = [{
-            service_variation_id: appState.selectedService.id
-        }];
-        
         // Add team member filter if specific staff selected
         if (appState.selectedStaff && appState.selectedStaff.id !== 'any') {
-            segmentFilters[0].team_member_id_filter = {
+            query.filter.segment_filters[0].team_member_id_filter = {
                 any: [appState.selectedStaff.id]
             };
         }
-        
-        query.filter.segment_filters = segmentFilters;
         
         console.log('Searching availability with query:', JSON.stringify(query, null, 2));
         
