@@ -180,12 +180,16 @@ function renderCategories() {
     container.innerHTML = `
         <h2>Select Service Category</h2>
         <div class="services-grid">
-            ${appState.availableCategories.map(category => `
-                <div class="service-card ${appState.selectedCategory?.id === category.id ? 'selected' : ''}" 
-                     onclick="selectCategory('${category.id}')">
-                    <div class="service-name">${category.name}</div>
-                </div>
-            `).join('')}
+            ${appState.availableCategories.map(category => {
+                // Escape the category name for use in onclick
+                const escapedName = category.name.replace(/'/g, "\\'");
+                return `
+                    <div class="service-card ${appState.selectedCategory?.id === category.id ? 'selected' : ''}" 
+                         onclick="selectCategory('${category.id}', '${escapedName}')">
+                        <div class="service-name">${category.name}</div>
+                    </div>
+                `;
+            }).join('')}
         </div>
         <div class="buttons-container">
             <button class="btn btn-secondary" onclick="goBackToLocation()">Back</button>
@@ -740,7 +744,9 @@ async function loadStaff() {
                 console.log('Filtered staff IDs:', filteredStaff.map(s => s.team_member_id));
                 bookableStaff = filteredStaff;
             } else {
-                console.log('No specific team members assigned to this service, showing all bookable staff');
+                console.log('No specific team members assigned to this service');
+                // If no team members are specifically assigned, show an empty array or a default option
+                bookableStaff = [];
             }
             
             if (bookableStaff.length > 0) {
@@ -781,6 +787,17 @@ async function loadStaff() {
 }
 function renderStaff() {
     const container = document.getElementById('content-container');
+    
+    // If no staff available, show "Any Available" option
+    if (appState.availableStaff.length === 0) {
+        appState.availableStaff = [{
+            id: 'any',
+            name: 'Any Available',
+            title: 'First available specialist',
+            description: 'We\'ll assign the first available specialist'
+        }];
+    }
+    
     container.innerHTML = `
         <h2>Choose Your Specialist</h2>
         <div class="staff-grid">
