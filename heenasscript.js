@@ -726,10 +726,36 @@ function renderStaff() {
     `;
 }
 function selectStaff(staffId) {
+    console.log('=== Selecting Staff ===');
+    console.log('Staff ID:', staffId);
+    
     appState.selectedStaff = appState.availableStaff.find(s => s.id === staffId);
-    appState.currentStep = 4;
-    updateSteps();
-    loadAvailability();
+    console.log('Selected staff:', appState.selectedStaff);
+    
+    if (!appState.selectedStaff) {
+        console.error('Staff not found:', staffId);
+        showError('Staff member not found. Please try again.');
+        return;
+    }
+    
+    // Update UI to show selection
+    const staffCards = document.querySelectorAll('.staff-card');
+    staffCards.forEach(card => {
+        card.classList.remove('selected');
+    });
+    
+    const selectedCard = document.querySelector(`[onclick="selectStaff('${staffId}')"]`);
+    if (selectedCard) {
+        selectedCard.classList.add('selected');
+    }
+    
+    // Small delay to show selection before loading
+    setTimeout(() => {
+        console.log('Loading availability for staff:', appState.selectedStaff.name);
+        appState.currentStep = 4;
+        updateSteps();
+        loadAvailability();
+    }, 300);
 }
 async function loadAvailability() {
     showLoading(true);
@@ -764,7 +790,7 @@ async function loadAvailability() {
         
         query.filter.segment_filters = segmentFilters;
         
-        console.log('Searching availability with query:', query);
+        console.log('Searching availability with query:', JSON.stringify(query, null, 2));
         
         const response = await fetch(`${SQUARE_CONFIG.apiUrl}/api/availability`, {
             method: 'POST',
@@ -775,21 +801,32 @@ async function loadAvailability() {
         });
         
         const data = await response.json();
-        console.log('Availability response:', data);
+        console.log('Availability response status:', response.status);
+        console.log('Availability response data:', data);
+        
+        if (data.errors) {
+            console.error('Square API errors:', data.errors);
+            showError('Unable to load availability. Please try again.');
+            return;
+        }
         
         if (data.availabilities && data.availabilities.length > 0) {
             appState.availableSlots = processAvailability(data.availabilities);
             console.log(`Found ${Object.keys(appState.availableSlots).length} days with availability`);
+            console.log('Available slots by date:', appState.availableSlots);
         } else {
             console.warn('No availabilities returned from Square');
             appState.availableSlots = {};
         }
         
+        // Always render the date/time picker, even if no availability
+        appState.currentStep = 4;
+        updateSteps();
         renderDateTime();
     } catch (error) {
         console.error('Error loading availability:', error);
         appState.availableSlots = {};
-        renderDateTime();
+        showError('Failed to load availability. Please try again.');
     } finally {
         showLoading(false);
     }
