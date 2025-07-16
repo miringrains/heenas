@@ -131,11 +131,10 @@ async function loadCategories() {
             // Count services in this category
             const serviceCount = services.filter(s => s.categoryId === category.id).length;
             
-            // Escape the category name for use in onclick
-            const escapedName = category.name.replace(/'/g, "\\'");
-            
             html += `
-                <div class="service-card" onclick="selectCategory('${category.id}', '${escapedName}')">
+                <div class="service-card" 
+                     data-category-id="${category.id}"
+                     data-category-name="${category.name.replace(/"/g, '&quot;')}">
                     <div class="service-name">${category.name}</div>
                     <div class="service-description">${serviceCount} services available</div>
                 </div>
@@ -154,6 +153,16 @@ async function loadCategories() {
         }
         
         container.innerHTML = html;
+        
+        // Add click handlers to category cards
+        const categoryCards = container.querySelectorAll('.service-card[data-category-id]');
+        categoryCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const categoryId = this.getAttribute('data-category-id');
+                const categoryName = this.getAttribute('data-category-name');
+                selectCategory(categoryId, categoryName);
+            });
+        });
         
     } catch (error) {
         console.error('Error loading categories:', error);
@@ -181,11 +190,10 @@ function renderCategories() {
         <h2>Select Service Category</h2>
         <div class="services-grid">
             ${appState.availableCategories.map(category => {
-                // Escape the category name for use in onclick
-                const escapedName = category.name.replace(/'/g, "\\'");
                 return `
                     <div class="service-card ${appState.selectedCategory?.id === category.id ? 'selected' : ''}" 
-                         onclick="selectCategory('${category.id}', '${escapedName}')">
+                         data-category-id="${category.id}"
+                         data-category-name="${category.name.replace(/"/g, '&quot;')}">
                         <div class="service-name">${category.name}</div>
                     </div>
                 `;
@@ -199,6 +207,16 @@ function renderCategories() {
             </button>
         </div>
     `;
+    
+    // Add click handlers to category cards
+    const categoryCards = container.querySelectorAll('.service-card[data-category-id]');
+    categoryCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const categoryId = this.getAttribute('data-category-id');
+            const categoryName = this.getAttribute('data-category-name');
+            selectCategory(categoryId, categoryName);
+        });
+    });
 }
 function selectCategory(categoryId, categoryName) {
     appState.selectedCategory = categoryId;
