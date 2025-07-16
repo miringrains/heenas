@@ -750,22 +750,10 @@ async function loadStaff() {
         if (data.team_member_booking_profiles && data.team_member_booking_profiles.length > 0) {
             // Filter team members who can perform this service
             let bookableStaff = data.team_member_booking_profiles.filter(profile => profile.is_bookable);
-            console.log(`Found ${bookableStaff.length} bookable team members (before service filter)`);
+            console.log(`Found ${bookableStaff.length} bookable team members`);
             
-            // If the selected service has specific team members, filter by those
-            if (appState.selectedService && appState.selectedService.teamMemberIds && appState.selectedService.teamMemberIds.length > 0) {
-                console.log('Filtering by service team members:', appState.selectedService.teamMemberIds);
-                const filteredStaff = bookableStaff.filter(profile => 
-                    appState.selectedService.teamMemberIds.includes(profile.team_member_id)
-                );
-                console.log(`After filtering: ${filteredStaff.length} team members can perform this service`);
-                console.log('Filtered staff IDs:', filteredStaff.map(s => s.team_member_id));
-                bookableStaff = filteredStaff;
-            } else {
-                console.log('No specific team members assigned to this service');
-                // If no team members are specifically assigned, show an empty array or a default option
-                bookableStaff = [];
-            }
+            // Square's Catalog API doesn't return which team members can perform which services
+            // The availability API will handle this filtering when we search for available times
             
             if (bookableStaff.length > 0) {
                 appState.availableStaff = bookableStaff.map(profile => ({
@@ -805,16 +793,6 @@ async function loadStaff() {
 }
 function renderStaff() {
     const container = document.getElementById('content-container');
-    
-    // If no staff available, show "Any Available" option
-    if (appState.availableStaff.length === 0) {
-        appState.availableStaff = [{
-            id: 'any',
-            name: 'Any Available',
-            title: 'First available specialist',
-            description: 'We\'ll assign the first available specialist'
-        }];
-    }
     
     container.innerHTML = `
         <h2>Choose Your Specialist</h2>
