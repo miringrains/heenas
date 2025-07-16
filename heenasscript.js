@@ -131,8 +131,11 @@ async function loadCategories() {
             // Count services in this category
             const serviceCount = services.filter(s => s.categoryId === category.id).length;
             
+            // Escape the category name for use in onclick
+            const escapedName = category.name.replace(/'/g, "\\'");
+            
             html += `
-                <div class="service-card" onclick="selectCategory('${category.id}', '${category.name}')">
+                <div class="service-card" onclick="selectCategory('${category.id}', '${escapedName}')">
                     <div class="service-name">${category.name}</div>
                     <div class="service-description">${serviceCount} services available</div>
                 </div>
@@ -140,6 +143,16 @@ async function loadCategories() {
         });
         
         html += '</div>';
+        
+        // Add back button if multiple locations are available
+        if (appState.locations && appState.locations.length > 1) {
+            html += `
+                <div class="buttons-container">
+                    <button class="btn btn-secondary" onclick="previousStep()">Back to Location</button>
+                </div>
+            `;
+        }
+        
         container.innerHTML = html;
         
     } catch (error) {
@@ -1370,6 +1383,9 @@ function previousStep() {
                 renderCustomerForm();
                 break;
         }
+    } else if (appState.currentStep === 1 && appState.locations && appState.locations.length > 1) {
+        // If we're on categories and have multiple locations, go back to location selection
+        renderLocationSelection();
     }
 }
 function showLoading(show = true) {
