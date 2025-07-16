@@ -869,7 +869,7 @@ async function loadAvailability() {
         console.log('Availability response status:', response.status);
         console.log('Availability response data:', data);
         
-        if (data.errors) {
+        if (data.errors && data.errors.length > 0) {
             console.error('Square API errors:', data.errors);
             showError('Unable to load availability. Please try again.');
             return;
