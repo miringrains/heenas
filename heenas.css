@@ -1,0 +1,562 @@
+/* Heena's Beauty Salon Booking System Styles */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --white: #ffffff;
+    --black: #000000;
+    --accent: #7c6aad;
+    --accent-hover: #6b5a9c;
+    --success: #4caf50;
+    --error: #f44336;
+    --gray: #6b7280;
+    --light-gray: #f3f4f6;
+    --bg-gray: #f9fafb;
+    --border-gray: #e5e7eb;
+    --text-secondary: #4b5563;
+}
+
+body {
+    font-family: Overusedgrotesk Roman, Arial, sans-serif;
+    color: var(--black);
+    background-color: var(--bg-gray);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.heenas-booking-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.booking-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+h1 {
+    font-family: Nocturnal Vf, Arial, sans-serif;
+    font-size: 65px;
+    letter-spacing: -1px;
+    line-height: 90%;
+    margin-bottom: 1rem;
+    color: var(--black);
+}
+
+h2 {
+    font-family: Nocturnal Vf, Arial, sans-serif;
+    font-size: 40px;
+    letter-spacing: -1px;
+    line-height: 90%;
+    margin-bottom: 1.5rem;
+    color: var(--black);
+}
+
+h3 {
+    font-family: Nocturnal Vf, Arial, sans-serif;
+    font-size: 28px;
+    letter-spacing: -0.5px;
+    margin-bottom: 1rem;
+    color: var(--black);
+}
+
+.subtitle {
+    font-size: 18px;
+    color: var(--gray);
+    margin-bottom: 2rem;
+}
+
+.booking-steps {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gray);
+    font-size: 14px;
+}
+
+.step.active {
+    color: var(--black);
+    font-weight: 600;
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--light-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+.step.completed .step-number {
+    background-color: var(--success);
+    color: var(--white);
+}
+
+.booking-content {
+    background-color: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-gray);
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.service-card {
+    background-color: var(--white);
+    border: 1px solid var(--border-gray);
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.service-category {
+    margin-bottom: 2rem;
+}
+
+.category-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--black);
+    border-bottom: 2px solid var(--border-gray);
+    padding-bottom: 0.5rem;
+}
+
+.service-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(140, 131, 180, 0.2);
+}
+
+.service-card.selected {
+    border-color: var(--accent);
+    background-color: rgba(140, 131, 180, 0.1);
+}
+
+.service-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 24px;
+    height: 24px;
+    background-color: var(--accent);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.service-card.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--light-gray);
+}
+
+.service-card.disabled:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--border-gray);
+}
+
+.service-name {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--black);
+}
+
+.service-duration {
+    font-size: 14px;
+    color: var(--gray);
+    margin-bottom: 0.5rem;
+}
+
+.service-price {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.service-description {
+    font-size: 14px;
+    color: var(--gray);
+    margin-top: 0.5rem;
+}
+
+.staff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.staff-card {
+    background-color: #ffffff;
+    border: 2px solid #e8e8e8;
+    border-radius: 16px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.staff-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(140, 131, 180, 0.2);
+}
+
+.staff-card.selected {
+    border-color: var(--accent);
+    background-color: rgba(140, 131, 180, 0.1);
+}
+
+.staff-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: var(--white);
+}
+
+.staff-name {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.staff-title {
+    font-size: 14px;
+    color: var(--gray);
+}
+
+.calendar-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.date-picker {
+    background-color: var(--light-gray);
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.calendar-nav {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--accent);
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.calendar-nav:hover {
+    background-color: rgba(140, 131, 180, 0.1);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.calendar-day:hover:not(.disabled) {
+    background-color: rgba(140, 131, 180, 0.2);
+}
+
+.calendar-day.selected {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+.calendar-day.disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.calendar-day.today {
+    border: 2px solid var(--accent);
+}
+
+.time-slots {
+    background-color: var(--light-gray);
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.75rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.time-slot {
+    background-color: var(--white);
+    border: 2px solid var(--light-gray);
+    border-radius: 8px;
+    padding: 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.time-slot:hover:not(.disabled) {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+}
+
+.time-slot.selected {
+    background-color: var(--accent);
+    color: var(--white);
+    border-color: var(--accent);
+}
+
+.time-slot.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.customer-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--black);
+}
+
+.form-input {
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--light-gray);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.booking-summary {
+    background-color: var(--light-gray);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+    font-weight: 600;
+    font-size: 18px;
+    padding-top: 1rem;
+}
+
+.buttons-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: #7a71a2;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: var(--light-gray);
+    color: var(--black);
+}
+
+.btn-secondary:hover {
+    background-color: #e0e0e0;
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+}
+
+.loading.active {
+    display: block;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--light-gray);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.success-message {
+    background-color: rgba(76, 175, 80, 0.1);
+    border: 2px solid var(--success);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.success-icon {
+    font-size: 48px;
+    color: var(--success);
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    background-color: rgba(244, 67, 54, 0.1);
+    border: 2px solid var(--error);
+    border-radius: 16px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    color: var(--error);
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .heenas-booking-container {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 48px;
+    }
+
+    h2 {
+        font-size: 32px;
+    }
+
+    .calendar-container {
+        grid-template-columns: 1fr;
+    }
+
+    .services-grid,
+    .staff-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .buttons-container {
+        justify-content: center;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
