@@ -2,7 +2,6 @@ const SQUARE_CONFIG = {
     apiUrl: 'https://heenas-booking.kevin-cdc.workers.dev',
     locationId: 'LTP465QT6TYG1',
     locations: {
-        'L9JENF1S82C06': 'Heenas Astoria (Main) - 30-58 Steinway St',
         'LVZ80KHZCGP9P': 'Kips Bay - 425 2nd Avenue',
         'LTP465QT6TYG1': 'Midtown East - 1059 2nd Ave',
         'LWRPFMGVJDPAP': 'Astoria - 30-58 Steinway Street'
@@ -897,7 +896,9 @@ async function loadAvailability() {
         
         if (data.errors && data.errors.length > 0) {
             console.error('Square API errors:', data.errors);
-            showError('Unable to load availability. Please try again.');
+            // Show the actual error message from Square
+            const errorMessage = data.errors.map(e => e.detail || e.code || 'Unknown error').join(', ');
+            showError(`Square API Error: ${errorMessage}`);
             return;
         }
         
